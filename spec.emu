@@ -4,9 +4,9 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/github.min.css">
 <script src="./spec.js"></script>
 <pre class="metadata">
-title: Proposal Title Goes Here
+title: TC39/ecma262 issue #1495
 stage: -1
-contributors: Your Name Goes Here
+contributors: Mike Samuel
 </pre>
 
 <h2>Option 1: Consolidate Host Callouts into PerformEval</h2>
@@ -49,8 +49,8 @@ contributors: Your Name Goes Here
   </emu-alg>
 
   <emu-clause id="sec-performeval" aoid="PerformEval">
-    <h1>Runtime Semantics: PerformEval ( _x_, _<del>evalRealm_,</del> <ins>_callerRealm_, _calleeRealm_,</ins> _strictCaller_, _direct_ )</h1>
-    <p>The abstract operation PerformEval with arguments _x_, _evalRealm_, _strictCaller_, and _direct_ performs the following steps:</p>
+    <h1>Runtime Semantics: PerformEval ( _x_, <del>_evalRealm_,</del> <ins>_callerRealm_, _calleeRealm_,</ins> _strictCaller_, _direct_ )</h1>
+    <p>The abstract operation PerformEval with arguments _x_, <del>_evalRealm_,</del> <ins>_callerRealm_, _calleeRealm_,</ins> _strictCaller_, and _direct_ performs the following steps:</p>
     <emu-alg>
       1. Assert: If _direct_ is *false*, then _strictCaller_ is also *false*.
       1. If Type(_x_) is not String, return _x_.
@@ -116,9 +116,9 @@ contributors: Your Name Goes Here
         1. Let _argList_ be ? ArgumentListEvaluation of _arguments_.
         1. If _argList_ has no elements, return *undefined*.
         1. Let _evalText_ be the first element of _argList_.
+        1. <ins>If Type(_evalText_) is not String, return _evalText_.</ins>
         1. If the source code matching this |CallExpression| is strict mode code, let _strictCaller_ be *true*. Otherwise let _strictCaller_ be *false*.
         1. Let _evalRealm_ be the current Realm Record.
-        1. <ins>If Type(_x_) is not String, return _x_.</ins>
         1. Perform ? HostEnsureCanCompileStrings(_evalRealm_, _evalRealm_).
         1. Return ? PerformEval(_evalText_, _evalRealm_, _strictCaller_, *true*).
     1. Let _thisCall_ be this |CallExpression|.
@@ -133,10 +133,10 @@ contributors: Your Name Goes Here
   <p>The `eval` function is the <dfn>%eval%</dfn> intrinsic object. When the `eval` function is called with one argument _x_, the following steps are taken:</p>
   <emu-alg>
     1. Assert: The execution context stack has at least two elements.
+    1. <ins>If Type(_x_) is not String, return _x_.</ins>
     1. Let _callerContext_ be the second to top element of the execution context stack.
     1. Let _callerRealm_ be _callerContext_'s Realm.
     1. Let _calleeRealm_ be the current Realm Record.
-    1. <ins>If Type(_x_) is not String, return _x_.</ins>
     1. Perform ? HostEnsureCanCompileStrings(_callerRealm_, _calleeRealm_).
     1. Return ? PerformEval(_x_, _calleeRealm_, *false*, *false*).
   </emu-alg>
